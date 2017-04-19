@@ -5,15 +5,35 @@ library(ibmdbR)
 con <- idaConnect('BLUDB','','')
 idaInit(con)
 #city<-c("Paris","Taipei","LosAngeles")
-met<-ida.data.frame('METEOR_LANDINGS')[,c('ID','LAT','LONG')]
-met <- head(met,30)
+#met<-ida.data.frame('METEOR_LANDINGS')[,c('ID','LAT','LONG')]
+met<-idaQuery("SELECT ID,LAT,LONG FROM METEOR_LANDINGS")
+met <- head(met,length(met[,1]))
 
-city <- ida.data.frame('WORLD_CITIES')[,c('CITY','LAT','LNG')]
-city <- head(city, 30000)
 
-city$SUM<-c(0)
+m<-met
+m$count<-1
+m$ID<-NA
+m<-aggregate(count~LONG+LAT,data=m,FUN=sum)
+
+city <- idaQuery("SELECT CITY,LAT,LNG FROM WORLD_CITIES" )
+#city <- ida.data.frame('WORLD_CITIES')[,c('CITY','LAT','LNG')]
+city <- head(city, length(city[,1]))
+
+
+
+city$sum<-c(0)
 `%+=%` = function(e1,e2) eval.parent(substitute(e1 <- e1 + e2))
 
-city[gdist(as.numeric(met$LAT),as.numeric(met$LONG),as.numeric(city$LAT),as.numeric(city$LNG),units = "km")>120,4]%+=%1
+dist<-function(a){
+  return(gdist(as.numeric(city$LNG),as.numeric(city$LAT),as.numeric(a[1]),as.numeric(a[2]),units = "km"))
+}
 
-city$SUM
+Tag<-apply(m,1,dist)
+
+
+
+city$sum<-apply(Tag,1,FUN = function(x){
+
+  return(sum(as.numeric(m[x,]$count)))
+}
+)
