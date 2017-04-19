@@ -4,8 +4,6 @@ library(ibmdbR)
 
 con <- idaConnect('BLUDB','','')
 idaInit(con)
-#city<-c("Paris","Taipei","LosAngeles")
-#met<-ida.data.frame('METEOR_LANDINGS')[,c('ID','LAT','LONG')]
 met<-idaQuery("SELECT ID,LAT,LONG FROM METEOR_LANDINGS")
 met <- head(met,length(met[,1]))
 
@@ -16,7 +14,6 @@ m$ID<-NA
 m<-aggregate(count~LONG+LAT,data=m,FUN=sum)
 
 city <- idaQuery("SELECT CITY,LAT,LNG FROM WORLD_CITIES" )
-#city <- ida.data.frame('WORLD_CITIES')[,c('CITY','LAT','LNG')]
 city <- head(city, length(city[,1]))
 
 

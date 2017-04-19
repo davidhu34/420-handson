@@ -1,3 +1,6 @@
+msg.headers = {
+    "Content-Type": "application/json"
+};
 const columns = [
   {
     "key": "score",
@@ -38,21 +41,22 @@ const columns = [
 const options = msg.payload.map( (e, i) => {
     return {
         key: i+1,
-        name: e.city,
+        name: e.NAME,
         values: {
-            max_avg: e.MAX_AVG || 0,
-            min_avg: e.MIN_AVG || 0,
-            score: e.SCORE || 0,
-            lat: e.LAT || 0,
-            lng: e.LNG || 0
+            name: e.NAME,
+            max_avg: Number(e.MAX_AVG) || 0,
+            min_avg: Number(e.MIN_AVG) || 0,
+            score: Number(e.SCORE) || 0,
+            lat: Number(e.LAT) || 0,
+            lng: Number(e.LNG) || 0
         },
         description_html: ''
     }
-})
+});
 const problem = {
   "subject": "tavel",
   "columns": columns,
   "options": options
 };
-msg.problem=JSON.stringify(problem);
+msg.payload=JSON.stringify(problem);
 return msg;
